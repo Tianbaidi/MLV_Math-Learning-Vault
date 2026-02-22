@@ -98,7 +98,7 @@ const trackerData = {
     colorScheme: {
         customColors: [
             "rgb(204, 255, 255)", // 强度1
-            "rgb(203, 241, 245)", // 强度2
+            "rgb(180, 241, 255)", // 强度2
             "rgb(166, 227, 233)",  // 强度3
             "rgb(113, 201, 206)",   // 强度4
             "rgb(70, 205, 207)",   // 强度5
@@ -112,7 +112,7 @@ const trackerData = {
     heatmapTitle: "🤫 今天码了多少字？ 🖊",
     heatmapSubtitle: "码字能吃吗？（疑惑）？.",
     intensityScaleStart: 1,
-    intensityScaleEnd: 20000
+    intensityScaleEnd: 7000
 }
 
 for(let page of dv.pages('"daily notes"').where(p=>p.writing)){
@@ -140,7 +140,7 @@ renderHeatmapTracker(this.container, trackerData)
 const allNotes = dv.pages()
     .filter(p => p.file && 
            p.file.path.endsWith(".md") && 
-           !p.file.path.includes("Ⅲ 实用转换工具/") &&
+           !p.file.path.includes("Ⅳ 实用转换工具/") &&
            !p.file.path.includes("_今天你学习了吗？/") &&
            !p.file.path.includes("C⋰图片资料/") &&
            !p.file.path.includes("1.AAA最前索引/") &&

@@ -153,4 +153,203 @@ $$|\sum_{i=1}^nf(x_{i}\Delta x_{i})-[F(b)-F(a)]|\leq\sum_{i=1}^n |f(\xi_{i})-f(\
 > 1. 闭区间连续，开区间可导
 > 2. 在 $[a,b]$ 可积
 
+> 今天的内容是微积分的最后一部分内容。至此，该系列完结（单元完结），不知道大家有没有做到速成捏。话说其实是带着点“科普性质”在这里讲概念的，真正的成才还是要大家多多练习，达到一定的熟练度。在做题过程中多 "注意注意" ，不过 這種機會不必刻意去求！
 
+# 定积分性质
+
+#### 定积分基本性质
+
+$Prop. 1$ 
+若 $f$ 在 $[a,b]$ 上可积 , $k$ 为常数 , 则 $kf$ 在 $[a,b]$ 上也可积 , 且 
+$$\int_{a}^b kf(x)dx=k \int_{a}^b f(x)dx$$
+proof. 略
+
+$Prop. 2$ 
+若 $f\ ,\ g$ 在 ${a,b}$ 上都可积，则 $f\pm g$ 在 $[a,b]$ 上也可积，且 
+$$\int_{a}^b [f(x)\pm g(x)]dx=\int_{a}^b f(x)dx\pm \int_{a}^b g(x)dx$$
+proof. 略
+
+> 我们知道了 , 积分对数乘和加减法封闭 . $Prop. 1$ 、$Prop. 2$  或可称为积分的线性性质 
+>$$\int_{a}^b [\alpha f(x)\pm\beta g(x)]dx=\alpha\int_{a}^b f(x)dx\pm \beta\int_{a}^b g(x)dx$$
+
+$Prop. 3$  
+若 $f\ ,\ g$ 在 $[a,b]$ 上都可积，则 $f\cdot g$ 在 $[a,b]$ 上也可积 
+
+proof. 
+ $f\ ,\ g$ 在 $[a,b]$ 上都可积 , 所以它们在 $[a,b]$ 上有界。
+ 因此存在常数 $M$，使得  
+$$|f(x)| \leq M ,\quad|g(x)| \leq M, \quad x \in [a,b]$$
+对 $[a,b]$ 的任意划分
+$$a = x_0 < x_1 < x_2 < \cdots < x_n = b$$
+设 $\hat{x}$ 和 $\bar{x}$ 是 $[x_{i-1}, x_i]$ 中的任意两点，则有
+$$\begin{aligned}
+|f(\hat{x})g(\bar{x}) - f(\bar{x})g(\hat{x})| 
+&\leq |f(\hat{x}) - f(\bar{x})| \cdot |g(\hat{x})| + |f(\bar{x})| \cdot |g(\bar{x}) - g(\hat{x})| \\
+&\leq M\bigl(|f(\hat{x}) - f(\bar{x})| + |g(\hat{x}) - g(\bar{x})|\bigr).
+\end{aligned}$$
+记 $f(x) \cdot g(x)$ 在小区间 $[x_{i-1}, x_i]$ 上的振幅为 $\omega_i$，$f(x)$ 和 $g(x)$ 在小区间 $[x_{i-1}, x_i]$ 上的振幅分别为 $\omega'_i$ 和 $\omega''_i$，则上式意味着
+$$\omega_i \leq M(\omega'_i + \omega''_i),$$
+因此
+$$0 \leq \sum_{i=1}^n \omega_i \Delta x_i \leq M\left(\sum_{i=1}^n \omega'_i \Delta x_i + \sum_{i=1}^n \omega''_i \Delta x_i\right).$$
+由于 $f(x)$ 和 $g(x)$ 都在 $[a,b]$ 可积，因而当 $\lambda = \max\{ \Delta x_i \} \to 0$ 时，上面的不等式的右端趋于零。由极限的夹逼性，得到  
+$$\lim_{\lambda \to 0} \sum_{i=1}^n \omega_i \Delta x_i = 0,$$
+根据 $Riemann$ 可积的充分必要条件，即知 $f(x) \cdot g(x)$ 在 $[a,b]$ 可积。
+不过我们通常不会出现  
+$$\int_{a}^b f(x)dx \cdot \int_{a}^b g(x)dx=\int_{a}^b [f(x)\cdot g(x)]dx$$
+的情况
+
+$Prop. 4$ 
+若 $f$ 在 $[a,b]$ 上可积 , $\forall c \in(a,b)$ , $f$ 在 $[a,c]$ 与 $[c,b]$ 均可积，且 
+$$\int_{a}^b f(x)dx=\int_{a}^c f(x)dx+\int_{c}^b f(x)dx$$
+proof. 略 (这个性质是充要的)
+这个式子称为 **关于积分区间的可加性**  
+
+> 为了让这个式子对任意 $a,b,c$ 都成立我们有如下可证的规定 ：
+> 1. $\int_{a}^bf(x)dx=-\int_{b}^a f(x)dx$
+> 2. $\int_{a}^af(x)dx=0$
+
+$Prop. 5$ 
+设 $f$ 为 $[a,b]$ 上可积函数 . 若 $f(x)\geq 0$ 那么 
+$$\int_{a}^b f(x)dx\geq 0$$
+我们可以结合线性运算进行推广，于是得到积分的**保序性** 
+若 $f$ 和 $g$ 都在 $[a,b]$ 上可积，且 $f(x)\geq g(x)$ , 有
+$$\int^b_{a}f(x)dx\geq\int^b_{a}g(x)dx$$
+$Prop. 6$  若 $f$ 在 $[a,b]$ s上可积，那么 $|f|$ 在 $[a,b]$ 上也可积，且 
+$$|\int^b_{a}f(x)dx|\leq\int^b_{a}|f(x)|dx$$
+这个结论也比较符合我们的直觉，也很直接得用了 $Prop.\ 5$ 的推论结论。故证明过程略
+但是我们要注意：这个性质是不可逆的，有些不可积函数在取绝对值后便可积。
+
+#### 积分中值定理
+
+$Thm. 7.1$ ($积分第一中值定理$) 若 $f$ 在 $[a,b]$ 上连续，则至少存在一点 $\xi\in [a,b]$ 使得  
+$$\int_{a}^b f(x)dx=f(\xi )(b-a)$$
+```tikz
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+
+\begin{document}
+\begin{tikzpicture}[scale=1.3]
+    % axes
+    \draw[->] (0,0) -- (5.5,0) node[right] {$x$};
+    \draw[->] (0,0) -- (0,4.5) node[above] {$y$};
+
+    % endpoints
+    \def\a{1}
+    \def\b{4}
+    \def\xiVal{2.3}          % numeric x-coordinate of ξ
+    \def\avgheight{1.85}    % average height f(ξ)
+
+    % function f(x)
+    \draw[blue, thick, smooth, samples=50] plot[variable=\x, domain=0.8:4.2]
+        ({\x}, {0.3*sin(deg(2*\x)) + 2 - 0.05*(\x-2.5)^2});
+    \node[blue, right] at (4.2,1.8) {$f(x)$};
+
+    % mark a and b
+    \draw[dashed] (\a,0) node[below] {$a$} -- (\a,{0.3*sin(deg(2*\a)) + 2 - 0.05*(\a-2.5)^2});
+    \draw[dashed] (\b,0) node[below] {$b$} -- (\b,{0.3*sin(deg(2*\b)) + 2 - 0.05*(\b-2.5)^2});
+
+    % rectangle f(ξ)(b-a)
+    \fill[blue!20, opacity=0.6] (\a,0) rectangle (\b,\avgheight);
+
+    % mark ξ and f(ξ) 
+    \draw[red, dashed, thick] (0,\avgheight) node[left] {$f(\xi)$} -- (4,\avgheight);
+
+    % area under the curve
+    \begin{scope}
+        \clip (\a,0) rectangle (\b,3);
+        \fill[green!20, opacity=0.3]
+            plot[variable=\x, domain=\a:\b, smooth, samples=50]
+            ({\x}, {0.3*sin(deg(2*\x)) + 2 - 0.05*(\x-2.5)^2}) -- (\b,0) -- (\a,0) -- cycle;
+    \end{scope}
+
+    % label for the integral
+    \node[orange] at (2.5,1.2) {$\displaystyle\int_a^b f(x)\,dx$};
+
+    % theorem statement
+    \node[above, align=center] at (2.9,4.2)
+        {\textbf{First Mean Value Theorem for Integrals}};
+
+\end{tikzpicture}
+\end{document}
+```
+
+结合我们的示意图，我们的证明也渐渐浮现出来。我们可以这样理解，所得到的 $f(\xi)$ 实际上是在区间$[a,b]$ 的所有函数值的平均值 . 我们在证明中的核心思想是连续函数的 **介值性** 以及积分不等式性性质 .
+倘若我们将得到 $f(\xi)$ 的值视为一个常函数即 $y=f(\xi)$ 我们对 $Thm. 7.1$ 进行推广
+$Thm.\ 7.1.1$ 若有 $g(x)$ 在 $[a,b]$ 不变号 ，则
+$$\int_{a}^b f(x)g(x)dx=f(\xi)\int_{a}^b g(x)d(x)$$
+不过我们也可以不在第一中值定理下进行推广，其证明是不变其宗的
+
+$Thm.\ 7.2$ ($积分第二中值定理$) 设 $f(x)$ 在$[a,b]$ 上可积 .
+1. 若函数 $g(x)$ 在 $[a,b]$ 上减，且 $g(x)\geq_{0}$ ,则存在 $\xi\in[a,b]$ ,使得 
+   $$\int_{a}^b f(x)g(x)dx=g(a)\int_{a}^\xi f(x)dx$$
+2. 若函数 $g(x)$ 在 $[a,b]$ 上增，且 $g(x)\geq_{0}$ ,则存在 $\eta\in[a,b]$ ,使得 
+   $$\int_{a}^b f(x)g(x)dx=g(b)\int_{\eta}^b f(x)dx$$
+这里证明较为复杂，我们手写证明过程如下：
+![[微信图片_20260212112903_292_7.jpg]]
+![[微信图片_20260212112904_293_7.jpg]]
+
+$Thm.\ 7.2.1$ 于是我们又能进行一个推论：
+若 $g$ 在 $[a,b]$ 上单调，则存在 $\xi \in [a,b]$  使得 
+$$\int_{a}^b f(x)g(x)dx=g(a)\int_{a}^{\xi}f(x)dx+g(b)\int_{\xi}^b f(x)dx$$
+> 骗你的，还有反常积分（）
+
+证明不难，积分第二定理是今后建立反常积分收敛判别法的工具 - 虽然我不知道是什么（），以后可以link过来
+
+对于积分第二中值定理的证明我们需要用到变限积分，好问题，变限积分是啥？
+ $Def.\ 4$  设 $f$ 在 $[a,b]$ 上可积，若 $x$ 在区间 $[a,b]$ 内，那么 $f$ 在 $[a,x]$ 区间内可可积，于是 
+$$\Phi(x)=\int_{a}^x f(t)dt\ ,\quad x\in[a,b]$$
+这样一个以积分上限为 $x$ 自变量的函数称为 **变上限定积分** ；同理，下限为 $x$ 的为 **变下限定积分** . 我们取积分变量为非 $x$ 的未知量，以免混淆 . 
+
+$Thm. \ 7.3$ 若 $f$ 在 $[a,b]$ 可积，由 $Def.\ 4$ 定义的函数 $\Phi$ 在 $[a,b]$ 上连续 .
+Proof. 对 $[a,b]$ 上任意确定的点 $x$ , 只要 $x+\Delta x\in[a,b]$  就有 
+$$\Delta \Phi=\int_{a}^{x+\Delta x} f(t)dt-\int_{a}^x f(t)dt=\int_{x}^{x+\Delta x} f(t)dt$$
+此时我们只要证明 $\int_{x}^{x+\Delta x} f(t)dt$ 的极限为 $0$ 即可，我们设 $\max{f(t)}=M,\quad t\in[a,b]$ , $\Delta x>0$ 就有 
+$$|\Delta\Phi|=|\int_{x}^{x+\Delta x} f(t)dt|\leq\int_{x}^{x+\Delta x} |f(t)|dt\leq M\Delta x\ ;$$
+$\Delta x<0$ 则不等式方向相反，由于夹逼，就有 
+$$\lim_{ \Delta x \to 0 }\Delta \Phi=0 $$
+得证
+
+$Thm.\ 7.4$ 若 $f$ 在 $[a,b]$ 上连续 , 则我们定义的函数 $\Phi$ 在 $[a,b]$ 上处处可导，且 
+$$\Delta \Phi'(x)=f(x),\quad x\in[a,b]$$
+proof. 利用积分第一中值定理，来进行导数的表达，结果易得
+
+这个概念称为 **原函数存在定理** 由于其沟通了导数和定积分，又被誉为 **微积分学基本定理** . 我们同时可以利用这个定理完成 $Newton-Leibniz$ 的证明。真好啊（）
+
+#### 换元积分法和分步积分法
+
+啊哈，我们之前是不是学过了不定积分的积分换元法和分布积分法，现在我们终于可以搬到定积分这边来了。
+
+$Thm.\ 7.5$  ($定积分积分换元法$) 若 $f$ 在 $[a,b]$ 上连续 ， $\varphi'$ 在 $[\alpha,\beta]$ 上可积，且满足
+$$\varphi(\alpha)=a\quad \varphi(\beta)=b\ ,\quad \varphi([\alpha,\beta]) \subseteq [a,b]$$
+则有积分换元公式 
+$$\int_{a}^b f(x)dx=\int_{\alpha}^\beta f(\varphi(t))\varphi'(t)dt$$
+Proof. 对此我们先复习一下我们的复合函数求导 
+$$F(\varphi(t))'=\varphi'(t)F'(\varphi(t))=\varphi'(t)f(\varphi(t))$$
+可以知道 $F(\varphi(t))$ 便是 $\varphi'(t)f(\varphi(t))$ 的原函数 . 可直接由 $Newton-Leibniz$ 公式得到 
+$$\int_{a}^b f(x)dx=\int_{\alpha}^\beta f(\varphi(t))\varphi'(t)dt=F(\varphi(\beta))-F(\varphi(\alpha))$$
+于是得证
+
+$Thm.\ 7.6$  ($定积分分步积分法$) 若 $u(x)$  $v(x)$ 为 $[a,b]$ 上的可微函数，且 $u'(x)$ 和 $v'(x)$ 都在 $[a,b]$ 上可积，则定积分分部积分公式： 
+$$\int_{a}^b  u(x)v'(x)dx=u(x)v(x)|_{a}^b -\int_{a}^b u'(x)v(x)dx$$
+Proof. 由于 $nv$ 是 $u'v+uv'$ 的原函数，所以有 
+$$\int_{a}^b u(x)v'(x)dx+\int_{a}^b u'(x)v(x)dx=\int_{a}^b [u(x)v'(x)+u'(x)v(x)]dx=u(x)v(x)|^b_{a}$$
+移项后得证，该公式亦可写成 
+$$\int_{a}^b u(x)dv(x)=u(x)v(x)|^b_{a}-\int_{a}^b v(x)du(x)\ . $$
+
+#### 泰勒公式的积分型余项
+
+$Def.\ 5$ 若 $[a,b]$ 上 $u(x)$ , $v(x)$ 有 $n+1$ 阶连续导数，则有 
+$$\int_{a}^b u(x)v^{(n+1)}(x)dx=\sum_{i=1}^{n+1} (-1)^{i+1}u^{i}(x)v^{n+1-i}(x)+(-1)^{n+1} \int_{a}^b u^{(n+1)}(x)v(x)dx$$
+这是推广的分布积分公式，令 $x\in U(x_{0})$ , $u(t)=(x-t)^n$ , $v(t)=f(t)$ , $t\in[a_{0},x]$ 由上式得 
+$$\begin{flalign}
+& \int_{x_{0}}^x (x-t)^nf^{(n+1)}(t)dt\\
+&=[(x-t)^nf^{(n)}(t)+n(x-t)^{n-1}f^{(n-1)}(t)+\cdots+n!f(t)]^x_{x_{0}}+\int_{x_{0}}^x 0 \cdot f(t)dt \\
+&=n!R_{n}(x)
+\end{flalign}$$
+
+此处的 $R_{n}(x)$ 就是泰勒公式的 $n$ 阶余项 . 由此求得 
+$$R_{n}(x)=\frac{1}{n!}\int_{x_{0}}^x f^{(n+1)}(t)(x-t)^n dx$$
+这就是泰勒展开的 **积分型余项** ，我们对其使用推广的第一积分中值定理，就得到 **拉格朗日型余项** . 若直接使用，就得到 **柯西型余项** 。
+
+至此，定积分部分就完结了。对于反常积分，我也将出手。
