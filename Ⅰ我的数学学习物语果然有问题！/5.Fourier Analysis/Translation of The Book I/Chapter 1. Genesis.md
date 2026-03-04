@@ -641,7 +641,7 @@ This question is stated loosely, but a lot of our effort in the next two chapter
 
 A simple observation allows us to guess a formula giving $A_{m}$ if the expansion (5) were to hold. Indeed, we multiply both sides by $\sin nx$
 
-一个简单的观察使我们能够猜测如果展开式(5)成立，那么给出 $A_{m}$ 的公式。实际上，我们将两边乘以 $\sin nx$
+一个简单的观察使我们能够猜测如果展开式(5)成立，那么给出 $A_{m}$ 的公式。实际上，我们将两边乘以 $\sin nx$ 
 
 ===== Page 32 =====
 
