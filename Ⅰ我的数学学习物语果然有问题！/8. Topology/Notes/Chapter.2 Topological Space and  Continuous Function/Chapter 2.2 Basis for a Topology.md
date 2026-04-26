@@ -26,6 +26,8 @@ $$U=\bigcup_{\alpha\in J}U_{\alpha}$$
 给定 $x\in U_{1}\cap U_{2}$ , 选取一个包含 $x$ 的基元素 $B_{1}$ ,使得存在 $B_{1}\subset U_{1}$ ; 再选取一个包含 $x$ 的基元素 $B_{2}$ ,使得存在 $B_{2}\subset U_{2}$ . 于是有 $x\in B_{3}$ 使得 $B_{3}\subset B_{1} \cap B_{2}$ . 于是 $x\in B_{3}$ 且 $B_{3}\subset U_{1}\cap U_{2}$ ,可见 $U_{1}\cap U_{2}$ 属于 $\mathcal{T}$ .
 我们通过归纳可以得出 $\mathcal{T}$ 中的有限交 $U_{1}\cap U_{2}\cap\cdots\cap U_{n}$ 在 $\mathcal{T}$ 中，这里就不展开了。
 
+![[Screenshot_20260423_083814_md.obsidian.png]]
+
 于是我们验证了这个定义，现在，我们有另外的基生拓扑的描述方法 
 
 > [!Example] Lemma 1.1
@@ -45,6 +47,8 @@ $$U=\bigcup_{\alpha\in J}U_{\alpha}$$
 **Proof.** 我们验证这是一个基只要验证其满足基的第二个条件：若$x$ 属于两个基元素 $B_{1}$ 和 $B_{2}$ 的交 ，则存在包含 $x$ 的一个基元素 $B_{3}$ , 使得 $B_{3}\subset B_{1}\cap B_{2}$ . 
 我们假设 $x\in C_{1}\cap C_{2}$ 其中 $C_{1},C_{2} \subset \mathcal{C}$ . 由于 $C_{1},C_{2}$ 是开集，所以 $C_{1}\cap C_{2}$ 也是开集。有 $C_{3}=C_{1}\cap C_{2}$ 也在 $\mathcal{C}$ 中，有 $x\in C_{3}\subset C_{1}\cap C_{2}$ . 设 $\mathcal{T}'$ 表示 $X$ 的由 $\mathcal{C}$ 生成的拓扑 , $\mathcal{T}$ 是 $X$ 的拓扑。上述引理表示 $\mathcal{T}'$ 细于 $\mathcal{T}$ . 反之，由于 $\mathcal{C}$ 的每一个元素都是 $\mathcal{T}$ 的一个元素，所以 $\mathcal{C}$ 的元素的任意并也在 $\mathcal{T}$ 中。根据 Lemma 1.1 就有 $\mathcal{T}'\subset \mathcal{T}$ , 从而证明了 $\mathcal{T'}=\mathcal{T}$ 
 
+![[Screenshot_20260423_090332_md.obsidian.png]]
+
 当拓扑是由基给出的时候，我们就能用基来作为拓扑粗细判别的标准，于是有以下引理 
 
 > [!Example] Lemma 1.3
@@ -54,4 +58,5 @@ $$U=\bigcup_{\alpha\in J}U_{\alpha}$$
 
 **Proof.** 我们先从第一条推到第二条：
 对于 $\mathcal{T}$ 的一个元素 $U$ , 我们证明 $U \in \mathcal{T}'$ . 取 $x\in U$ .
-因为 $\mathcal{B}$ 生成了 $\mathcal{T}$ , 则存在一个元素 $B\in \mathcal{B}$ , 使得 $x\in B\subset U$ 又由于存在 $B'\in \mathcal{B}'$ ,故
+因为 $\mathcal{B}$ 生成了 $\mathcal{T}$ , 则存在一个元素 $B\in \mathcal{B}$ , 使得 $x\in B\subset U$ 又由于存在 $B'\in \mathcal{B}'$ ,故 $x\in B'\subset B$ 根据定义可以知道 $U\in \mathcal{T}'$
+现在我们由第二条推到第一条 ：
