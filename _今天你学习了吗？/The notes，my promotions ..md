@@ -132,7 +132,8 @@ trackerData.basePath = 'daily notes';
 
 renderHeatmapTracker(this.container, trackerData)
 ```
-
+精选日记：[[2026-05-06]] 北京游记
+[[2026-05-10]] 上海粉丝见面会
 
 
 ``` dataviewjs 
