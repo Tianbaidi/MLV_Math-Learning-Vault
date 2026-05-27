@@ -105,7 +105,10 @@ $$\bigcup_{A\in\mathcal{A}}A=\{ x \mid \text{for at least one }A\in \mathcal{A} 
 $$\bigcap_{A\in \mathcal{A}}A=\{ x \mid \text{for every }A\in\mathcal{A} \}$$
 对于我们的空族的并相对直观 
 $$\bigcup_{A\in\mathcal{A}}A=\varnothing$$
-但对于空族的交就显得不是很显然，Munkres 表示不在定义空族的交
+但对于空族的交就显得不是很显然，Munkres 表示不在定义空族的交。
+
+对 De Margan 公式进行推广，我们有
+$$\left(\bigcup_{j=1}^{\infty} E_j\right)^c = \bigcap_{j=1}^{\infty} E_j^c$$
 
 #### 笛卡尔积 （Cartesian product）
 

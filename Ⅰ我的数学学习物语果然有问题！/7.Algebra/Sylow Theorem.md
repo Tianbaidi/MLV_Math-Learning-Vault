@@ -59,7 +59,20 @@ p^e
 $$N=|S|=\sum_{orbits~O}|O|$$
 的式子，依据 $lemma.1.2$ 我们可以知道 $p$ 不整除 $N$ , 则至少有一个轨道的大小不被 $p$ 整除，我们记子集 $[U]$ 的轨道为 $\mathcal{O}_{[U]}$ ，令 $H$ 为 $[U]$ 的稳定子。再依据 $lemma.1.1$ 我们知道 $H$ 整除 $U$ 的元素个数为 $p^e$ —— $H$ 是 $p$ 的幂。由轨道-稳定子定理可知 $|H|\cdot |\mathcal{O}_{[U]}|=G=p^em$ , 其中 $|\mathcal{O}_{[U]}|$ 必然是 $m$ . 那么 $H$ 是 $sylow \text{ p-subgroup}$ 是 Trivial 的。
 
-> [!Danger] Corollary.2 Cauchy Theorem
+> [!Danger] Corollary.1.3 Cauchy Theorem
 > 若有限群的阶能被素数 $p$ 整除，则该群中必含有一个 $p$ 阶元
 
-这个
+这个说是 Theorem.1 的推论，但是实际上还是我们的 Cauchy Theorem ，甚至是期中考的题目。我们必然可以不通过 Sylow Theorem 来证明。相反我们可以尝试用这条引理来推出 Sylow Theorem.
+
+### 共轭性
+> [!NOTE] Theorem.2 Second Sylow Theorem
+> 1
+> 1
+
+
+### 数量
+
+> [!NOTE] Theorem.3 Third Sylow Theorem
+> 1
+> 1
+

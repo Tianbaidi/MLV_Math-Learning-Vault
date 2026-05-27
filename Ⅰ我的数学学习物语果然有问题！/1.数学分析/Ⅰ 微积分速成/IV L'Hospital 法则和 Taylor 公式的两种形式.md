@@ -1,6 +1,7 @@
 ---
 tags:
   - 微积分
+  - Mathematical_Analysis
 ---
 
 > 我们再学习函数极限之后会遇到一些待定型的极限，如 $\frac{0}{0}$ , $\frac{\infty}{\infty}$ , $0^0$ , $\infty-\infty$ , $0\cdot \infty$ $\cdots$ 形式，使用"L'Hospital 法则" 和 "Taylar 公式" 是两个很有效的方法 。还记得我们在数列极限学过的 Stolz 定理吗 ？我们得到了同样有效的工具 。在后续的积分学习中，我们可能还会多次运用到泰勒展开的工具。那么，吾等开启今日学习旅程吧。

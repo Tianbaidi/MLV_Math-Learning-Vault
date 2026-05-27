@@ -36,7 +36,7 @@ Question
 
 
 Warning
-> [!Warning] Title
+> [!Warning] Remark
 > Contents
 
 Failure
