@@ -42,6 +42,17 @@ tags:
 > 	2. $f+g$ 以及 $fg$ 都是可测的若两函数是有限值函数
 > 6. 设 $f$ 是 可测的，那么 $f(x)=g(x)$ a.e(几乎处处)$x$ ,于是 $g$ 也是可测的
 
+第一条就涉及我们此前提到的关于广义实值函数下的的验证问题，对于 **2.** 我们知道 $\Phi$ 是连续函数，则 $\Phi^{-1}((-\infty,a))$ 必然为开集，记为 $\mathcal{O}$ ,因此，我们有 $(\Phi \circ f)^{-1}((-\infty,a))=f^{-1}(\mathcal{O})$ 是可测的
 
+	这里我们不能随意调整连续和可测的条件！
 
+对于 **3.** 我们要注意到一个观察 $\{ \sup_{n }f_{n}>a \}=\bigcup_{n}\{ f_{n}>a \}$ 我们又有 $\inf_{n} f_{n}(x)=-\sup_{n}(-f_{n}(x))$ . 有 $\limsup_{ n \to \infty } f_{n}(x)=\inf_{k} \{ \sup_{n>k} f_{n} \}$ 和 $\liminf_{ n \to \infty } f_{n}(x)=\sup_{k} \{ \inf_{n>k} f_{n} \}$ .
 
+对于 **4.** 我们可以从 **3.** 推得。**5.** 我们先讨论 **1** ，若 $k$ 是奇数，有 $\{ f^k >a\}=\left\{  f> \frac{1}{a^k}  \right\}$ 若 $k$ 是偶的，则有 $\{ f^k >a\}=\left\{  f> \frac{1}{a^k}  \right\}\cap \left\{  f<- \frac{1}{a^k}  \right\}$ . 对 **2.** 我们有 $f+g$ 是可测的，由于 
+$$\{ f+g>a \}=\bigcup_{r\in \mathbb{Q}}\{ f>a-r \}\cap \{ g>r \}$$
+这里的 $\mathbb{Q}$ 是有理数。随后，我们解决 $fg$ 是可测的问题 , 注意到 
+$$fg= \frac{1}{4}[(f+g)^{2}-(f-g)^{2}]$$
+可测是显然的。对于定义在 $E$ 上的函数满足 $f(x)\neq g(x)$ 的 $x$ 构成的集合测度为 $0$ ，我们就称 $f(x)=g(x)\quad \text{a.e}\quad x\in E$  a.e : Almost everywhere
+至此，对于此前的讨论，我们可以将处处要求减弱，要求几乎处处即可
+
+其总结即为 **6** 。
