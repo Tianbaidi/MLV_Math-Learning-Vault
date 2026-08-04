@@ -29,7 +29,7 @@ $$0\leq F_{N}(x)-F_{N,M}(x)\leq \frac{1}{M}$$
 
 下一条定理则是对这条定理的补充，
 
-> [!NOTE] Theorem
+> [!NOTE] Theorem 4.2
 > 令 $f$ 是 $\mathbb{R}^d$ 上的可测函数，存在一系列简单函数 $\{ \varphi_{k} \}_{k=1}^{\infty}$ 满足 
 > $$|\varphi_{k}(x)|\leq |\varphi_{k+1}(x)| \qquad \text{and} \qquad \lim_{ k \to \infty } \varphi(k)(x)=f(x) , for~all~x$$
 > 特别的 ，我们有 $|\varphi_{k}(x)|\leq |f(x)|$ 对于所有的 $x$ 与 $k$ 成立 

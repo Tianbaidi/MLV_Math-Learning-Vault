@@ -31,13 +31,13 @@ Success
 
 
 Question
-> [!Question] Title
+> [!Question] Question
 > Contents
 
 
 Warning
-> [!Warning] Remark
-> Contents
+>[!Warning] Remark
+Contents
 
 Failure
 > [!Failure] Title

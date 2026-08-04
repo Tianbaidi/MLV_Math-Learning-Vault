@@ -134,7 +134,7 @@ renderHeatmapTracker(this.container, trackerData)
 ```
 精选日记：[[2026-05-06]] 北京游记
 [[2026-05-10]] 上海粉丝见面会
-
+[[2026-07-11]] 南方科技大学实分析项目
 
 ``` dataviewjs 
 // 获取所有有效笔记（排除模板和系统文件）
