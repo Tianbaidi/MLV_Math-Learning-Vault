@@ -1,332 +1,332 @@
-##### 笔记热力图
+---
+cssclasses:
+  - forest-home
+---
+
+# 今天你学习了吗？
+
+> *雾、苔藓、深林，与一盏晚归的灯。*
+
+````dataviewjs
+const today = window.moment().format('YYYY-MM-DD');
+const dailyPath = `daily notes/${today}.md`;
+const dailyTemplate = `---
+date: ${today}
+learning:
+moon:
+writing:
+tags: daily
+---
+
+# ${today} 的五谷鱼粉（学习目标！） 🌾
+
+- **记录时间**: ${window.moment().format('HH:mm')}
+
+## 🌾 五谷记录
+
+
+## 🔥 火候掌控（心情吐槽）
+
+
+## 📈 数据追踪
+~~~dataview
+TABLE learning as "学习强度", moon as "心情指数"
+FROM "daily notes"
+WHERE file.name = this.file.name
+~~~
+`;
+
+try {
+  if (!app.vault.getAbstractFileByPath(dailyPath)) {
+    await app.vault.create(dailyPath, dailyTemplate);
+  }
+  dv.paragraph(`> [!tip] 今日入口\n> [[${dailyPath}|打开 ${today} 的五谷鱼粉]]`);
+} catch (error) {
+  console.error('无法创建今日日记', error);
+  dv.paragraph('> [!error] 今日日记创建失败\n> 请检查 `daily notes` 文件夹是否可写。');
+}
+````
+
+> [!quote] 今日仪表盘
+> 写下一点，积累一点。这里的统计只从今天开始记录。
+
+## ✍️ 全库写入热力图
 
 ```dataviewjs
-// 表情评级配置
-const moonEmoji = {
-    20:"😢",
-    40:"😓", 
-    60:"🥺",
-    80:"😆",
-    100:"🥳"
+const dataPath = '.obsidian/plugins/vault-writing-tracker/data.json';
+const colors = ['#DCE8D6', '#C6D8C1', '#ADC59D', '#90AD7B', '#728F62', '#55795A', '#3B6652', '#285347', '#E6A75C', '#FFD58A'];
+const writingEmojis = ['💧', '🌱', '☘️', '🌿', '🍃', '🌳', '🌲', '🌙', '✨', '🪔'];
+
+// 合并两条数据源（插件自动记录优先，手记兜底）：
+//   插件有记录的日期 → 用插件字数（自动统计，更准确）
+//   插件没记录的日期 → 用日记 frontmatter 手记的 writing 字段
+const merged = new Map();
+const units = new Map(); // 日期 → 计量单位（'词'/'字'），悬停提示用
+
+const parseAmount = (value) => {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const n = Number(value.match(/-?\d+(?:\.\d+)?/)?.[0]);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
 };
 
-const trackerData = {
-    entries: [],
-    colorScheme: {
-        customColors: [
-            "rgb(153,225,229)",
-            "rgb(243,232,203)",
-            "rgb(242,198,180)",  
-            "rgb(251,175,175)",   
-            "rgb(255, 84, 26)"
-        ]
-    },
-    heatmapTitle: "📚 每日获得五谷鱼粉 📚",
-    heatmapSubtitle: "五谷鱼粉🌾，在五谷🌰，在火候🔥，在匠心✨，在决心💪。",
-    intensityScaleStart: 1,
-    intensityScaleEnd: 5
+for (const page of dv.pages('"daily notes"')) {
+  const amount = parseAmount(page.writing);
+  if (amount !== null && amount > 0) {
+    merged.set(page.file.name, amount);
+    units.set(page.file.name, '词'); // 手记是词数估计
+  }
 }
 
-// 改进的字段解析函数
-function parseFieldValue(field, defaultValue, min, max) {
-    if (field === undefined || field === null) return defaultValue;
-    
-    let value;
-    if (typeof field === 'number') {
-        value = field;
-    } else if (typeof field === 'string') {
-        // 移除可能的空格和非数字字符
-        const numMatch = field.toString().replace(/\s/g, '').match(/-?\d+/);
-        value = numMatch ? parseInt(numMatch[0]) : defaultValue;
-    } else {
-        // 尝试转换为数字
-        const num = Number(field);
-        value = isNaN(num) ? defaultValue : num;
+try {
+  const raw = await app.vault.adapter.read(dataPath);
+  const data = JSON.parse(raw);
+  if (data.version === 1 && data.days && typeof data.days === 'object') {
+    for (const [date, value] of Object.entries(data.days)) {
+      const amount = Number(value?.addedWords ?? value?.addedCharacters);
+      if (Number.isFinite(amount) && amount > 0) {
+        merged.set(date, amount);
+        units.set(date, value?.addedWords != null ? '词' : '字'); // 旧记录是字符口径
+      }
     }
-    
-    return Math.min(Math.max(value, min), max);
+  }
+} catch (error) {
+  console.warn('[主页] 插件写入数据不可用，仅用日记手记数据', error);
 }
 
-// 获取表情函数
-function getEmojiForMoon(moonValue) {
-    moonValue = Math.min(Math.max(moonValue, 1), 100);
-    
-    if (moonValue <= 20) return moonEmoji[20];
-    if (moonValue <= 40) return moonEmoji[40];
-    if (moonValue <= 60) return moonEmoji[60];
-    if (moonValue <= 80) return moonEmoji[80];
-    return moonEmoji[100];
+// 色阶上限：固定 16000（历史词数峰值）。08-08 的 26738 是字符口径异类，顶格饱和显示；
+// 开方色阶：低档拉开梯度（中位数 1200 不再糊在最低档）。想改线性可去掉 Math.sqrt
+const WRITING_SCALE_MAX = 25600;
+const writingEmoji = (amount) => {
+  const ratio = Math.max(0, Math.min(1, Math.sqrt(amount / WRITING_SCALE_MAX)));
+  return writingEmojis[Math.min(writingEmojis.length - 1, Math.floor(ratio * writingEmojis.length))];
+};
+
+const entries = [...merged.entries()]
+  .map(([date, amount]) => {
+    const ratio = Math.sqrt(Math.max(1, amount) / WRITING_SCALE_MAX); // 与 emoji 同口径
+    return { date, intensity: Math.max(1, ratio * WRITING_SCALE_MAX), content: writingEmoji(amount) };
+  })
+  .sort((a, b) => a.date.localeCompare(b.date));
+
+if (typeof renderHeatmapTracker !== 'function') {
+  dv.paragraph('> [!warning] 缺少渲染组件\n> 请启用社区插件 **Heatmap Tracker**，否则热力图无法渲染。');
+} else if (!entries.length) {
+  dv.paragraph('> [!info] 写入记录尚未产生\n> 在日记 frontmatter 填写 writing 字段，或编辑保存普通笔记后，这里会出现热力图。');
+} else {
+  const writingCard = this.container.createDiv({ cls: 'forest-heatmap-card forest-writing-card' });
+  renderHeatmapTracker(writingCard, {
+    entries,
+    basePath: '',
+    colorScheme: { customColors: colors },
+    heatmapTitle: '✍️ 雨后写作',
+    heatmapSubtitle: '雾、苔藓、深林与一盏晚归的灯。',
+    intensityScaleStart: 1,
+    intensityScaleEnd: WRITING_SCALE_MAX,
+  });
+  // 悬停小窗显示当日写入字数：原生 title/aria-label 贴着鼠标会重叠，改为自绘小窗弹在格子左上方
+  let tooltip = document.getElementById('forest-htp-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'forest-htp-tooltip';
+    document.body.appendChild(tooltip);
+  }
+  for (const [date, amount] of merged.entries()) {
+    const cell = writingCard.querySelector(`[data-htp-date="${date}"]`);
+    if (!cell) continue;
+    cell.removeAttribute('title');
+    cell.removeAttribute('aria-label');
+    cell.addEventListener('mouseenter', () => {
+      tooltip.textContent = `${amount.toLocaleString('zh-CN')} ${units.get(date) || '词'}`;
+      tooltip.style.display = 'block';
+      const rect = cell.getBoundingClientRect();
+      tooltip.style.left = `${rect.left}px`;
+      tooltip.style.top = `${rect.top - tooltip.offsetHeight - 6}px`;
+    });
+    cell.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  }
+  // 视口以今天为中心；今天无数据时贴到最近的有数据日期（避免居中到空白）
+  const sortedDates = entries.map((e) => e.date).sort();
+  const todayStr = window.moment().format('YYYY-MM-DD');
+  const centerDate = sortedDates.includes(todayStr) ? todayStr : [...sortedDates].reverse().find((d) => d <= todayStr) || sortedDates[0];
+  const graph = writingCard.querySelector('.heatmap-tracker-graph');
+  const centerCell = graph?.querySelector(`[data-htp-date="${centerDate}"]`);
+  if (graph && centerCell) {
+    graph.scrollLeft = Math.max(0, centerCell.getBoundingClientRect().left - graph.getBoundingClientRect().left - (graph.clientWidth - centerCell.offsetWidth) / 2);
+  }
 }
-
-// 首先，获取所有daily notes页面
-const allDailyNotes = dv.pages('"daily notes"');
-
-// 调试：显示找到的页面数量
-
-
-// 遍历所有页面，不只是有特定字段的
-for(let page of allDailyNotes){
-    // 解析字段值，如果字段不存在则使用默认值
-    const learningValue = parseFieldValue(page.learning, 1, 1, 5);
-    const moonValue = parseFieldValue(page.moon, 1, 1, 100);
-    
-    // 记录到热力图数据中
-    trackerData.entries.push({
-        date: page.file.name,
-        filePath: page.file.path,
-        intensity: learningValue,
-        content: getEmojiForMoon(moonValue),
-        // 保存原始值用于调试
-        rawLearning: page.learning,
-        rawMoon: page.moon
-    })  
-}
-
-// 调试：显示处理了多少条目
-
-
-trackerData.basePath = 'daily notes';
-
-renderHeatmapTracker(this.container, trackerData);
 ```
+
+## 🌾 每日状态自评
 
 ```dataviewjs
+const dailyPages = dv.pages('"daily notes"');
+const numberValue = (value) => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const result = Number(value.match(/-?\d+(?:\.\d+)?/)?.[0]);
+    return Number.isFinite(result) ? result : null;
+  }
+  return null;
+};
+const moodEmoji = (value) => value <= 20 ? '😩' : value <= 40 ? '😗' : value <= 60 ? '🙂' : value <= 80 ? '😄' : '🥳';
+const learningEntries = [];
+const moodEntries = [];
+const heatmapRow = this.container.createDiv({ cls: 'forest-heatmap-row' });
 
-const trackerData = {
-    
-    entries: [],
-    colorScheme: {
-        customColors: [
-            "rgb(204, 255, 255)", // 强度1
-            "rgb(180, 241, 255)", // 强度2
-            "rgb(166, 227, 233)",  // 强度3
-            "rgb(113, 201, 206)",   // 强度4
-            "rgb(70, 205, 207)",   // 强度5
-            "rgb(48,227,202)",   // 强度4
-            "rgb(0,184,169)",   // 强度4
-            "rgb(17,153,158)",   // 强度4
-            "rgb(24,145,172)",   // 强度4
-            "rgb(246,114,128)",   // 强度4
-        ]
-    },
-    heatmapTitle: "🤫 今天码了多少字？ 🖊",
-    heatmapSubtitle: "码字能吃吗？（疑惑）？.",
+for (const page of dailyPages) {
+  const learning = numberValue(page.learning);
+  const mood = numberValue(page.moon);
+  if (learning !== null && learning >= 1 && learning <= 5) {
+    learningEntries.push({ date: page.file.name, filePath: page.file.path, intensity: learning });
+  }
+  if (mood !== null && mood >= 1 && mood <= 100) {
+    moodEntries.push({ date: page.file.name, filePath: page.file.path, intensity: mood, content: moodEmoji(mood) });
+  }
+}
+
+const makeHeatmap = (entries, title, subtitle, palette, end) => {
+  if (!entries.length) {
+    dv.paragraph(`> [!info] ${title}\n> 填写今日日记里的对应字段后，这里会自动出现记录。`);
+    return;
+  }
+  const card = heatmapRow.createDiv({ cls: 'forest-heatmap-card forest-daily-card' });
+  const container = card.createDiv();
+  renderHeatmapTracker(container, {
+    entries,
+    basePath: 'daily notes',
+    colorScheme: { customColors: palette },
+    heatmapTitle: title,
+    heatmapSubtitle: subtitle,
     intensityScaleStart: 1,
-    intensityScaleEnd: 7000
-}
+    intensityScaleEnd: end,
+  });
+  // 视口以今天为中心；今天无数据时贴到最近的有数据日期（避免居中到空白）
+  const sortedDates = entries.map((e) => e.date).sort();
+  const todayStr = window.moment().format('YYYY-MM-DD');
+  const centerDate = sortedDates.includes(todayStr) ? todayStr : [...sortedDates].reverse().find((d) => d <= todayStr) || sortedDates[0];
+  const graph = card.querySelector('.heatmap-tracker-graph');
+  const centerCell = graph?.querySelector(`[data-htp-date="${centerDate}"]`);
+  if (graph && centerCell) {
+    graph.scrollLeft = Math.max(0, centerCell.getBoundingClientRect().left - graph.getBoundingClientRect().left - (graph.clientWidth - centerCell.offsetWidth) / 2);
+  }
+};
 
-for(let page of dv.pages('"daily notes"').where(p=>p.writing)){
-    // 获取学习强度值，确保在1-5范围内
-    let writingValue = parseInt(page.writing) || 1
-    
-    
-    trackerData.entries.push({
-        date: page.file.name,
-        filePath: page.file.path,
-        intensity: writingValue,
-        
-    })  
-}
-
-trackerData.basePath = 'daily notes';
-
-renderHeatmapTracker(this.container, trackerData)
+makeHeatmap(learningEntries, '学习强度', '每天给学习状态一个 1–5 的刻度。', ['rgb(204,255,255)', 'rgb(166,227,233)', 'rgb(113,201,206)', 'rgb(48,227,202)', 'rgb(0,184,169)'], 5);
+makeHeatmap(moodEntries, '心情指数', '心情留白也没关系，想记时再记。', ['rgb(153,225,229)', 'rgb(243,232,203)', 'rgb(242,198,180)', 'rgb(251,175,175)', 'rgb(255,84,26)'], 100);
 ```
-精选日记：[[2026-05-06]] 北京游记
-[[2026-05-10]] 上海粉丝见面会
-[[2026-07-11]] 南方科技大学实分析项目
 
-``` dataviewjs 
-// 获取所有有效笔记（排除模板和系统文件）
-const allNotes = dv.pages()
-    .filter(p => p.file && 
-           p.file.path.endsWith(".md") && 
-           !p.file.path.includes("Ⅳ 实用转换工具/") &&
-           !p.file.path.includes("_今天你学习了吗？/") &&
-           !p.file.path.includes("C⋰图片资料/") &&
-           !p.file.path.includes("1.AAA最前索引/") &&
-           !p.file.path.includes("daily notes/"))
-    .map(p => p.file);
-
-// 基于当天日期生成随机种子（确保每日结果一致）
-const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-const seed = parseInt(today.replace(/-/g, "")); 
-
-// 生成随机索引（修复负数问题）
-const randomValue = Math.abs(Math.sin(seed) * 10000) % 1;
-const randomIndex = Math.floor(randomValue * allNotes.length);
-
-// 俏皮的标题和提示语数组
-const playfulTitles = [
-    "🎯 今日知识彩蛋",
-    "✨ 幸运笔记发现",
-    "🔮 知识盲盒时间",
-    "🌟 今日特别推荐",
-    "💫 随机智慧掉落",
-    "🎁 每日知识惊喜",
-    "📚 脑洞大开时间"
-];
-
-const playfulPrompts = [
-    "嘿，今天该复习这个了！",
-    "猜猜我今天给你选了啥？",
-    "缘分让你看到这个笔记～",
-    "叮！你的每日知识已送达",
-    "这个笔记在向你招手呢 👋",
-    "今日份的灵感来源在此！",
-    "哇哦，发现了一个宝藏！"
-];
-
-// 选择随机的俏皮元素
-const randomTitleIndex = Math.abs(Math.floor(Math.sin(seed * 2) * 10000)) % playfulTitles.length;
-const randomPromptIndex = Math.abs(Math.floor(Math.sin(seed * 3) * 10000)) % playfulPrompts.length;
-
-// 安全检查
-if (allNotes.length === 0) {
-    dv.paragraph("😴 今天没有笔记可以推荐，快去创造些知识吧！");
-} else {
-    // 获取随机笔记
-    const randomNote = allNotes[randomIndex];
-    
-    // 安全地获取文件夹路径
-    const folderPath = randomNote.path.split("/").slice(0, -1).join("/");
-    const locationText = folderPath ? `藏在"${folderPath}"里` : "在根目录躺着";
-    
-    // 显示可点击的链接（带俏皮提示）
-    dv.header(2, playfulTitles[randomTitleIndex]);
-    dv.paragraph(`**${playfulPrompts[randomPromptIndex]}**`);
-    dv.paragraph(`🎉 [[${randomNote.path}|${randomNote.name}]]`);
-    dv.paragraph(`*${locationText}的小可爱，快去看看吧~*`);
-    
-    // 添加一些随机的结束语
-    const endings = [
-        "祝您阅读愉快！📖",
-        "学习使我快乐！",
-        "知识就是力量！💪",
-        "每天进步一点点~ 🌱",
-        "保持好奇，永远年轻！🎈"
-    ];
-    
-    // 修复结束语随机索引计算
-    const randomEndingValue = Math.abs(Math.sin(seed * 4) * 10000) % 1;
-    const randomEndingIndex = Math.floor(randomEndingValue * endings.length);
-    const randomEnding = endings[randomEndingIndex];
-    
-    // 确保结束语被输出
-    dv.paragraph(`*${randomEnding}*`);
-}
-
-// 确保最后不返回 undefined
-""
-```
+## ✅ 今日待办
 
 ```dataviewjs
-// ================ 配置区域 (可按需修改) ================
-const startDate = moment().subtract(7, 'days').toDate(); // 统计过去7天
-const targetFolders = ['"Ⅰ我的数学学习物语果然有问题！"','"Ⅱ物理的与邪恶曾是敌对（）"',]; // 空数组表示全库，如只想查特定文件夹：['"Inbox"', '"Projects"']
-const ebookExtensions = [".pdf", ".epub", ".mobi", ".azw3", ".djvu"]; // 要统计的电子书格式
+// 两栏待办：Tasks 插件块放进 HTML div 不会渲染，故用 dataviewjs 自渲染
+const allTasks = [];
+for (const page of dv.pages()) {
+  for (const t of (page.file.tasks ?? [])) allTasks.push(t);
+}
+const dayStart = window.moment().startOf('day').valueOf();
+const dayEnd = window.moment().add(1, 'day').startOf('day').valueOf();
 
-// ================ 核心逻辑 ================
-// 初始化数组
-const mdFiles = [];
-const ebookFiles = [];
+const pending = allTasks
+  .filter((t) => !t.checked && t.due?.ts !== undefined && t.due.ts < dayEnd)
+  .sort((a, b) => a.due.ts - b.due.ts)
+  .slice(0, 10);
 
-// 1. 获取符合条件的笔记文件 (md)
-let pages;
-if (targetFolders.length > 0) {
-    pages = dv.pages(targetFolders.join(' or '));
+const doneToday = allTasks
+  .filter((t) => t.checked && t.completed?.ts >= dayStart && t.completed?.ts < dayEnd)
+  .sort((a, b) => b.completed.ts - a.completed.ts)
+  .slice(0, 10);
+
+const row = this.container.createDiv({ cls: 'forest-tasks-row' });
+
+const makeCol = (title, items, done) => {
+  const col = row.createDiv({ cls: 'forest-tasks-col' });
+  col.createEl('h3', { text: title });
+  if (!items.length) {
+    col.createEl('p', { cls: 'forest-task-empty', text: done ? '今天还没有完成的任务。' : '没有到期或逾期的任务。' });
+    return;
+  }
+  const ul = col.createEl('ul', { cls: 'forest-task-list' });
+  for (const t of items) {
+    const li = ul.createEl('li', { cls: 'forest-task-item' });
+    li.createEl('span', { cls: 'forest-task-mark', text: done ? '✅' : '☐' });
+    const a = li.createEl('a', { cls: 'internal-link', href: t.link.path, text: t.visual ?? t.text });
+    if (done && t.completed) a.title = `完成于 ${t.completed.toFormat('MM-dd HH:mm')}`;
+    if (!done && t.due) li.createEl('span', { cls: 'forest-task-due', text: `📅 ${t.due.toFormat('MM-dd')}` });
+  }
+};
+
+makeCol('🔥 待完成', pending, false);
+makeCol('✅ 已完成', doneToday, true);
+```
+
+## 🧭 最近七天
+
+```dataviewjs
+const homepagePath = dv.current().file.path;
+const cutoff = window.moment().subtract(7, 'days').startOf('day').valueOf();
+const excludePath = (path) => path === homepagePath || path.startsWith('.obsidian/') || path.startsWith('daily notes/') || path.includes('/templates/');
+const changed = dv.pages()
+  .where((page) => page.file?.path?.endsWith('.md') && !excludePath(page.file.path))
+  .where((page) => page.file.mtime.ts >= cutoff)
+  .sort((page) => page.file.mtime, 'desc')
+  .limit(12);
+const created = dv.pages()
+  .where((page) => page.file?.path?.endsWith('.md') && !excludePath(page.file.path))
+  .where((page) => page.file.ctime.ts >= cutoff)
+  .sort((page) => page.file.ctime, 'desc')
+  .limit(12);
+
+dv.header(3, '🆕 新建笔记');
+if (created.length) {
+  dv.table(['笔记', '创建时间'], created.map((page) => [page.file.link, page.file.ctime.toFormat('MM-dd HH:mm')]));
 } else {
-    pages = dv.pages();
+  dv.paragraph('> [!info] 最近七天没有新建笔记。');
 }
 
-for (let page of pages) {
-    if (page.file.cday >= startDate) {
-        mdFiles.push({
-            name: page.file.name,
-            path: page.file.path,
-            cday: page.file.cday,
-            type: "笔记"
-        });
-    }
-}
-
-// 2. 获取符合条件的电子书文件
-for (let file of app.vault.getFiles()) {
-    const ext = "." + file.extension.toLowerCase();
-    if (ebookExtensions.includes(ext)) {
-        const fileCreationDate = moment(file.stat.ctime).toDate();
-        if (fileCreationDate >= startDate) {
-            const sizeMB = file.stat.size / (1024 * 1024);
-            ebookFiles.push({
-                name: file.name,
-                path: file.path,
-                cday: fileCreationDate,
-                type: "电子书",
-                size: sizeMB < 0.1 ? (file.stat.size / 1024).toFixed(1) + " KB" : sizeMB.toFixed(2) + " MB"
-            });
-        }
-    }
-}
-
-// ================ 渲染输出 ================
-// 3. 检查是否有数据，无数据时显示提示
-if (mdFiles.length === 0 && ebookFiles.length === 0) {
-    dv.paragraph(`> [!info] 统计结果\n> 在最近7天（自 ${moment(startDate).format("YYYY-MM-DD")} 起）内，没有找到新增的笔记或电子书。`);
+dv.header(3, '📝 最近修改的笔记');
+if (changed.length) {
+  dv.table(['笔记', '最后修改'], changed.map((page) => [page.file.link, page.file.mtime.toFormat('MM-dd HH:mm')]));
 } else {
-    // 有数据时，渲染完整报告
-    dv.header(2, `📈 七日内新增内容统计 (${moment(startDate).format("MM-DD")} 至 ${moment().format("MM-DD")})`);
+  dv.paragraph('> [!info] 最近七天没有修改笔记。');
+}
 
-    // 3.1 渲染笔记表格
-    if (mdFiles.length > 0) {
-        dv.header(3, `📝 新建笔记 (${mdFiles.length} 篇)`);
-        dv.table(["笔记名称", "创建日期", "所在路径"],
-            mdFiles.sort((a, b) => b.cday - a.cday).map(f => [
-                `[[${f.path}\\|${f.name.replace(/.md$/, "")}]]`,
-                moment(f.cday).format("MM-DD ddd"),
-                f.path.split("/").slice(0, -1).join("/") || "/"
-            ])
-        );
-    }
+const ebookExtensions = new Set(['pdf', 'epub', 'mobi', 'azw3', 'djvu']);
+const ebooks = app.vault.getFiles()
+  .filter((file) => ebookExtensions.has(file.extension.toLowerCase()) && file.stat.mtime >= cutoff)
+  .sort((a, b) => b.stat.mtime - a.stat.mtime)
+  .slice(0, 12);
 
-    // 3.2 渲染电子书表格
-    if (ebookFiles.length > 0) {
-        dv.header(3, `📚 新增电子书 (${ebookFiles.length} 本)`);
-        dv.table(["电子书名称", "添加日期", "文件大小"],
-            ebookFiles.sort((a, b) => b.cday - a.cday).map(f => [
-                `[[${f.path}\\|${f.name}]]`,
-                moment(f.cday).format("MM-DD ddd"),
-                f.size
-            ])
-        );
-    }
-
-    // 4. 渲染分类统计与进度条
-    dv.header(3, "📊 输入分布统计");
-    const total = mdFiles.length + ebookFiles.length;
-    const mdPercent = total > 0 ? Math.round((mdFiles.length / total) * 100) : 0;
-    const ebookPercent = total > 0 ? Math.round((ebookFiles.length / total) * 100) : 0;
-
-    // 创建文本进度条函数
-    function createBar(percent, width = 20) {
-        const filledCount = Math.round(percent / 100 * width);
-        const filled = "█".repeat(filledCount);
-        const empty = "░".repeat(width - filledCount);
-        return `${filled}${empty} ${percent}%`;
-    }
-
-    // 使用Markdown表格输出统计
-    dv.paragraph(`
-| 内容类型 | 数量 | 占比 | 可视化进度 |
-|:---|:---:|:---:|:---|
-| **笔记 (MD)** | ${mdFiles.length} | ${mdPercent}% | ${createBar(mdPercent)} |
-| **电子书** | ${ebookFiles.length} | ${ebookPercent}% | ${createBar(ebookPercent)} |
-| **总计** | **${total}** | 100% | ${createBar(100)} |
-`);
-
-    // 5. 添加一段总结性文字
-    const dayRange = moment().diff(startDate, 'days');
-    dv.paragraph(`> [!summary] 小结\n> 过去 ${dayRange} 天里，你共新增了 **${total}** 个知识文件，平均每天 **${(total/dayRange).toFixed(1)}** 个。继续保持输入与积累！`);
+dv.header(3, '📚 最近加入或修改的电子书');
+if (ebooks.length) {
+  dv.table(['文件', '最后修改', '大小'], ebooks.map((file) => [
+    dv.fileLink(file.path, false, file.name),
+    window.moment(file.stat.mtime).format('MM-DD HH:mm'),
+    `${(file.stat.size / 1024 / 1024).toFixed(1)} MB`,
+  ]));
+} else {
+  dv.paragraph('> [!info] 最近七天没有电子书变动。');
 }
 ```
 
+## 🎲 今日知识彩蛋
 
+```dataviewjs
+const candidates = dv.pages()
+  .where((page) => page.file?.path?.endsWith('.md'))
+  .where((page) => !page.file.path.startsWith('.obsidian/') && !page.file.path.startsWith('daily notes/') && page.file.path !== dv.current().file.path);
+const notes = Array.from(candidates);
+const seed = Number(window.moment().format('YYYYMMDD'));
+const index = notes.length ? Math.abs(Math.floor(Math.sin(seed) * 10000)) % notes.length : 0;
+
+if (notes.length) {
+  const note = notes[index];
+  dv.paragraph(`今天不妨重访：${note.file.link}`);
+} else {
+  dv.paragraph('> [!info] 还没有可推荐的笔记。');
+}
+```

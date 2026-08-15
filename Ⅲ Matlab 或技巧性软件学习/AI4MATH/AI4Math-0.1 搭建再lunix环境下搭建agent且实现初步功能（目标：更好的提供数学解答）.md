@@ -3,6 +3,7 @@ tags:
   - AI4Math
   - lunix
   - Computer-science
+  - un_complete_notes
 ---
 # Ubuntu 的基本安装和配置
 
