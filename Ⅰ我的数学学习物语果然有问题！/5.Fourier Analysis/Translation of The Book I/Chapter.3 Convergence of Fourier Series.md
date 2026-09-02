@@ -1,9 +1,7 @@
 ---
 
 ---
----
-
-===== Page 86 =====
+#Fourier_Analysis 
 
 3 Convergence of Fourier Series
 

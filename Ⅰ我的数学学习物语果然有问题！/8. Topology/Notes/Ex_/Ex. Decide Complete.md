@@ -41,7 +41,7 @@ Def.
 - **要点 B（收敛）：** 证明在给定的度量下，$d(x_n,x) \to 0$。这里通常用到 $\varepsilon/2$ 或 $\varepsilon/3$ 技巧（先让柯西列中的两项靠得足够近，再令其中一项趋向极限）。
 
 
-Example [[The Topology of Mapping Spaces]] #Mapping_Space 
+Example [[8 映射空间的拓扑]] #Mapping_Space 
 
 设 $\{f_n\}_{n=1}^{\infty}$ 是 $(M(X,Y),d_u)$ 中的任意柯西（Cauchy）列。即：
 

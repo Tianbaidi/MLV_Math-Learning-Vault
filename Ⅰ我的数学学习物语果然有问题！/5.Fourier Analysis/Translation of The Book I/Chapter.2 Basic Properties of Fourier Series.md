@@ -1,3 +1,8 @@
+---
+tags:
+  - Fourier_Analysis
+---
+
 # 第2章 傅里叶级数的基本性质
 
 Nearly fifty years had passed without any progress on the question of analytic representation of an arbitrary function, when an assertion of Fourier threw new light on the subject. Thus a new era began for the development of this part of Mathematics and this was heralded in a stunning way by major developments in mathematical Physics.

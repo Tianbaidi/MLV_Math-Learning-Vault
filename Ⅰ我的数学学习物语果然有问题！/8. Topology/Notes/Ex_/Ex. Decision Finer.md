@@ -82,7 +82,7 @@ _（注：反向不总是成立，除非拓扑可由收敛唯一确定，如第�
     
     - **证明思路：** 若另一拓扑 $\mathcal{T}'$ 使 $p$ 连续，则对任意 $V \in \mathcal{T}'$，有 $p^{-1}(V) \in \mathcal{T}_X$。根据商拓扑定义，$V \in \mathcal{T}_q$。故 $\mathcal{T}' \subseteq \mathcal{T}_q$。因此 $\mathcal{T}_q$ 是最细的。
 
-Example.[[The Topology of Mapping Spaces#25#25]] #Mapping_Space 
+Example.[[8 映射空间的拓扑#25#25]] #Mapping_Space 
 
 证明“一致收敛拓扑 $\mathcal{T}_{\text{u.c.}}$ 细于乘积拓扑 $\mathcal{T}_{\text{prod}}$，且粗于箱拓扑 $\mathcal{T}_{\text{box}}$”，核心是证明以下包含链：
 
