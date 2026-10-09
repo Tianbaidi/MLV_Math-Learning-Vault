@@ -2,3 +2,51 @@ daily notes
 .obsidian
 /C⋰图片资料/游记/
 Ⅰ我的数学学习物语果然有问题！/SOP SHEET
+_今天你学习了吗？/Plans/
+
+# macOS / Windows metadata
+.DS_Store
+._*
+.AppleDouble/
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# Local Obsidian trash, caches and private AI conversations
+.trash/
+.obsidian-cache/
+copilot-conversations/
+
+# Editor backups and temporary files
+*.bak
+*.bak-*
+*.backup
+*.backup-*
+*.letter_backup
+*.swp
+*.swo
+*.tmp
+*~
+~$*
+__pycache__/
+*.py[cod]
+
+# Local credentials (keep examples shareable)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.key
+*.p12
+*.pfx
+.aws/
+.ssh/
+
+# Downloaded textbooks and their PDF fragments; keep notes and public papers
+*[Zz]-[Ll]ibrary*.pdf
+**/*[Zz]-[Ll]ibrary*/**/*.pdf
+/Ⅰ我的数学学习物语果然有问题！/1.Analysis/Ⅰ Mathmatical Analysis/Textbook/A 教材（数学方面） 上/*.pdf
+/Ⅰ我的数学学习物语果然有问题！/1.Analysis/Ⅰ Mathmatical Analysis/Textbook/A 教材（数学方面） 下/*.pdf
+/Ⅰ我的数学学习物语果然有问题！/2.Algebra/Linear Algebra/Advanced_Algebra/TextBook/AA 丘维声 高等代数学习指导/**/*.pdf
+/Ⅰ我的数学学习物语果然有问题！/2.Algebra/Linear Algebra/Advanced_Algebra/TextBook/AAA 谢启鸿 白皮书/*.pdf
